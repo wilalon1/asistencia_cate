@@ -16,9 +16,12 @@ class Persona(models.Model):
         return '{} {}'.format(self.nombre, self.apellidos)
 
 class AsistenciaCabecera(models.Model):
-    descripcion = models.TextField()
-    acronimo = models.TextField()
+    descripcion = models.CharField(max_length=700)
+    acronimo = models.CharField(max_length=700)
     estado = models.BooleanField(default=True)
+    
+    def __str__(self):  # 👈 opcional pero recomendable
+        return self.descripcion
 
 
 class AsistenciaDetalle(models.Model):
@@ -26,3 +29,8 @@ class AsistenciaDetalle(models.Model):
     asistenciaCabecera = models.ForeignKey(AsistenciaCabecera, on_delete=models.SET_NULL, null=True, blank=True)
     fecha = models.DateField()
     estado = models.BooleanField(default=True)
+    
+    def __str__(self):  # 👈 AQUÍ VA
+        return f"{self.asistenciaCabecera} | {self.persona} | {self.fecha}"
+    
+
