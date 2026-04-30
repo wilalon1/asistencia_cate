@@ -29,6 +29,7 @@ class AsistenciaDetalle(models.Model):
     asistenciaCabecera = models.ForeignKey(AsistenciaCabecera, on_delete=models.SET_NULL, null=True, blank=True)
     fecha = models.DateField()
     estado = models.BooleanField(default=True)
+    observacion = models.CharField(max_length=700, default='-')
     
     def __str__(self):  # 👈 AQUÍ VA
         return f"{self.asistenciaCabecera} | {self.persona} | {self.fecha}"
