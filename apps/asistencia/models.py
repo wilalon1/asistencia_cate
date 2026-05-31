@@ -25,13 +25,24 @@ class AsistenciaCabecera(models.Model):
 
 
 class AsistenciaDetalle(models.Model):
+    
+    TIPO_CHOICES = [
+        ('C', 'Catequesis'),
+        ('M', 'Misa'),
+    ]
+
     persona = models.ForeignKey(Persona, on_delete=models.SET_NULL, null=True, blank=True)
     asistenciaCabecera = models.ForeignKey(AsistenciaCabecera, on_delete=models.SET_NULL, null=True, blank=True)
     fecha = models.DateField()
     estado = models.BooleanField(default=True)
     observacion = models.CharField(max_length=700, default='-')
+    tipo = models.CharField(
+        max_length=1,
+        choices=TIPO_CHOICES,
+        default='C'
+    )
     
     def __str__(self):  # 👈 AQUÍ VA
-        return f"{self.asistenciaCabecera} | {self.persona} | {self.fecha}"
+        return f"{self.asistenciaCabecera} | {self.persona} | {self.fecha} | {self.observacion} | {self.tipo}"
     
 

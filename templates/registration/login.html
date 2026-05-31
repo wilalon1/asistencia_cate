@@ -1,0 +1,76 @@
+
+{% block title %}
+Login
+{% endblock %}
+
+{% block navbar %}
+{% endblock %}
+
+{% block content %}
+
+<div style="
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+">
+
+    <div style="
+        width:350px;
+        padding:30px;
+        border-radius:15px;
+        background: rgba(255,255,255,0.08);
+        box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        backdrop-filter: blur(10px);
+        color: white;
+    ">
+
+        <h3 style="text-align:center; margin-bottom:20px;">Iniciar sesión</h3>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="form-group" style="margin-bottom:15px;">
+                <label>Usuario</label>
+                <input class="form-control" type="text" name="username" style="
+                    background: rgba(255,255,255,0.2);
+                    border: none;
+                    color: white;
+                ">
+            </div>
+
+            <div class="form-group" style="margin-bottom:15px;">
+                <label>Contraseña</label>
+                <input class="form-control" type="password" name="password" style="
+                    background: rgba(255,255,255,0.2);
+                    border: none;
+                    color: white;
+                ">
+            </div>
+
+            <div style="text-align:right; margin-bottom:15px;">
+                <a href="{% url 'password_reset' %}" style="color:#ddd; font-size:12px;">
+                    ¿Olvidaste tu contraseña?
+                </a>
+            </div>
+
+            <button type="submit" class="btn btn-block" style="
+                background: #00c6ff;
+                border: none;
+                color: white;
+                font-weight: bold;
+                transition: 0.3s;
+            "
+            onmouseover="this.style.background='#0072ff'"
+            onmouseout="this.style.background='#00c6ff'">
+                Ingresar
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

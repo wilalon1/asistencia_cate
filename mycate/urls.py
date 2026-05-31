@@ -20,5 +20,7 @@ from apps.asistencia.views import PersonaListView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include('apps.asistencia.urls'))
+    path('api/', include('apps.asistencia.urls')),
+    path('accounts/', include('django.contrib.auth.urls')),
+    path('', include('apps.core.urls')),
 ]
