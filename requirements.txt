@@ -78,7 +78,7 @@ notebook_shim==0.2.2
 numpy==1.26.4
 openpyxl==3.1.2
 packaging==23.1
-pandas==2.0.3
+pandas==2.2.2
 pandocfilters==1.5.0
 parso==0.8.3
 pickleshare==0.7.5
@@ -140,3 +140,5 @@ whitenoise==6.12.0
 xlrd==2.0.1
 zope.event==5.0
 zope.interface==6.0
+setuptools>=68
+wheel
