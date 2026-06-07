@@ -6,14 +6,11 @@ whitenoise==6.12.0
 
 psycopg2-binary==2.9.12
 
-numpy==1.26.4
-scipy==1.11.1
 
 openpyxl==3.1.2
-
+django-smart-selects==1.7.2
 requests==2.31.0
 python-dateutil==2.8.2
 
 setuptools>=68
 wheel
-django-smart-selects==1.7.2
