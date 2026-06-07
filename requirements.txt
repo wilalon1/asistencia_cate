@@ -35,7 +35,6 @@ filelock==3.12.2
 Flask==2.3.2
 Flask-Cors==4.0.0
 fqdn==1.5.1
-gevent==23.7.0
 gitignorefile==1.1.2
 greenlet==2.0.2
 gunicorn==26.0.0
