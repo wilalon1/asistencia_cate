@@ -23,4 +23,6 @@ urlpatterns = [
     path('api/', include('apps.asistencia.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
     path('', include('apps.core.urls')),
+    
+    path('chaining/', include('smart_selects.urls')),
 ]

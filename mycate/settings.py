@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'apps.cliente',
     'apps.core',
     'rest_framework',
+    'smart_selects',
 ]
 
 MIDDLEWARE = [
