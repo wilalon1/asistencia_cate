@@ -30,12 +30,14 @@ ALLOWED_HOSTS = [
     'asistencia-cate.onrender.com',
     'localhost',
     '127.0.0.1',
-    'asistencia-cate-1.onrender.com'
+    'asistencia-cate-1.onrender.com',
+    'asistencia-cate-pd9k.onrender.com'
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     'https://asistencia-cate.onrender.com',
-    'https://asistencia-cate-1.onrender.com'
+    'https://asistencia-cate-1.onrender.com',
+    'https://asistencia-cate-pd9k.onrender.com'
 ]
 
 
