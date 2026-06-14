@@ -1,11 +1,21 @@
 {% extends 'base/base.html' %}
 
 {% block content %}
+
 <h2>Bienvenido {{ user.username }}</h2>
 
 <ul>
-    <li><a href="{% url 'cliente:cliente_listar' %}">Clientes</a></li>
-    <li><a href="#">Rutas</a></li>
+    <li>
+        <a href="#">
+            Clientes
+        </a>
+    </li>
+
+    <li>
+        <a href="#">
+            Rutas
+        </a>
+    </li>
 </ul>
 
 {% endblock %}
