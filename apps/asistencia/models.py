@@ -21,7 +21,8 @@ class Persona(models.Model):
         blank=True
     )
     nombre = models.CharField(max_length=50)
-    apellidos = models.CharField(max_length=70)
+    apellidos = models.CharField(max_length=200)
+    codigo = models.CharField(max_length=50)
     fechaNacimiento = models.DateField()
     domicilio = models.TextField()
     telefonoPadre = models.CharField(max_length=12)
@@ -31,7 +32,7 @@ class Persona(models.Model):
     estado = models.BooleanField(default=True)
 
     def __str__(self):
-        return '{} {}'.format(self.nombre, self.apellidos)
+        return '{} {}'.format(self.nombre, self.apellidos, self.codigo)
 
 
 class UsuarioAsistencia(models.Model):
