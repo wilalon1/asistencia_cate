@@ -5,11 +5,13 @@ from django.urls import path
 from .views import (
     PersonaListView,
     AsistenciaCabeceraListView,
-    AsistenciaDetalleListView
+    AsistenciaDetalleListView,
+    PersonaPorUsuarioListView,
 )
 
 urlpatterns = [
     path('personas/', PersonaListView.as_view(), name='personas-list'),
     path('asistencia-cabecera/', AsistenciaCabeceraListView.as_view()),
     path('asistencia-detalle/', AsistenciaDetalleListView.as_view()),
+    path('personas/filtro',PersonaPorUsuarioListView.as_view(),name='personas_filtro'),
 ]

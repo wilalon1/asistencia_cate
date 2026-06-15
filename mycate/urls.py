@@ -17,6 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from apps.asistencia.views import PersonaListView
+from apps.asistencia.views import PersonaPorUsuarioListView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -25,4 +26,5 @@ urlpatterns = [
     path('', include('apps.core.urls')),
     
     path('chaining/', include('smart_selects.urls')),
+    path('personas/filtro', PersonaPorUsuarioListView.as_view(),name='personas_filtro'),
 ]

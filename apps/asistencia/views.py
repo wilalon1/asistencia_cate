@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from rest_framework.generics import ListAPIView
 from datetime import datetime  # 👈 IMPORTANTE
 
-from apps.asistencia.models import Persona, AsistenciaCabecera, AsistenciaDetalle
+from apps.asistencia.models import Persona, AsistenciaCabecera, AsistenciaDetalle,UsuarioAsistencia
 
 #Filtros de pruebas
 #http://127.0.0.1:8000/api/asistencia-detalle/?fecha_inicio=01-04-2026&fecha_fin=01-04-2026
@@ -20,6 +20,29 @@ from .serializers import (
 class PersonaListView(ListAPIView):
     queryset = Persona.objects.all()
     serializer_class = PersonaSerializer
+    
+    
+class PersonaPorUsuarioListView(ListAPIView):
+    serializer_class = PersonaSerializer
+
+    def get_queryset(self):
+
+        usuario = self.request.query_params.get('usuario')
+
+        if not usuario:
+            return Persona.objects.none()
+
+        try:
+            usuario_asistencia = UsuarioAsistencia.objects.get(
+                usuario__username=usuario
+            )
+
+            return Persona.objects.filter(
+                asistenciaCabecera=usuario_asistencia.asistenciaCabecera
+            )
+
+        except UsuarioAsistencia.DoesNotExist:
+            return Persona.objects.none()
 
 
 class AsistenciaCabeceraListView(ListAPIView):
