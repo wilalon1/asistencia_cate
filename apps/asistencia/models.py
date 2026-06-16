@@ -73,4 +73,4 @@ class AsistenciaDetalle(models.Model):
         if self.misa:
             tipos.append("M")
 
-        return f"{self.asistenciaCabecera} | {self.persona} | {self.fecha} | {' '.join(tipos)}"
+        return f"{self.asistenciaCabecera} | {self.persona} | {self.fecha} | {' '.join(tipos)}| {self.observacion}" 
