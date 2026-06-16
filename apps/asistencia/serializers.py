@@ -14,6 +14,15 @@ class AsistenciaCabeceraSerializer(serializers.ModelSerializer):
 
 
 class AsistenciaDetalleSerializer(serializers.ModelSerializer):
+
+    persona_nombre = serializers.SerializerMethodField()
+
+
     class Meta:
         model = AsistenciaDetalle
         fields = '__all__'
+
+
+    def get_persona_nombre(self, obj):
+
+        return f"{obj.persona.nombre} {obj.persona.apellidos}"

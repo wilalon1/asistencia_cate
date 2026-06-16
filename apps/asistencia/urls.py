@@ -1,17 +1,16 @@
-#from django.conf.urls import url
-from django.contrib.auth.views import login_required
-
 from django.urls import path
-from .views import (
-    PersonaListView,
-    AsistenciaCabeceraListView,
-    AsistenciaDetalleListView,
-    PersonaPorUsuarioListView,
-)
+from . import views
+
+
+app_name = "asistencia"
+
 
 urlpatterns = [
-    path('personas/', PersonaListView.as_view(), name='personas-list'),
-    path('asistencia-cabecera/', AsistenciaCabeceraListView.as_view()),
-    path('asistencia-detalle/', AsistenciaDetalleListView.as_view()),
-    path('personas/filtro',PersonaPorUsuarioListView.as_view(),name='personas_filtro'),
+
+    path(
+        'listar/',
+        views.listar,
+        name='listar'
+    ),
+
 ]

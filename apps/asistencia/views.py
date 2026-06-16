@@ -17,6 +17,22 @@ from .serializers import (
     AsistenciaDetalleSerializer
 )
 
+
+def listar(request):
+
+    usuario_asistencia = UsuarioAsistencia.objects.filter(
+        usuario=request.user
+    ).first()
+
+
+    return render(
+        request,
+        'asistencia/listar.html',
+        {
+            'usuario_asistencia': usuario_asistencia
+        }
+    )
+
 class PersonaListView(ListAPIView):
     queryset = Persona.objects.all()
     serializer_class = PersonaSerializer
@@ -58,10 +74,30 @@ class AsistenciaDetalleListView(ListAPIView):
 
         # 🔹 parámetros
         cabecera_id = self.request.query_params.get('cabecera_id')
+        usuario = self.request.query_params.get('usuario')
         persona_id = self.request.query_params.get('idPersona')
         fecha_inicio = self.request.query_params.get('fecha_inicio')
         fecha_fin = self.request.query_params.get('fecha_fin')
         observacion = self.request.query_params.get('observacion')  # 👈 NUEVO
+        
+        if usuario:
+
+            try:
+
+                usuario_asistencia = UsuarioAsistencia.objects.get(
+                    usuario__username=usuario
+                )
+
+
+                queryset = queryset.filter(
+                    asistenciaCabecera=
+                    usuario_asistencia.asistenciaCabecera
+                )
+
+
+            except UsuarioAsistencia.DoesNotExist:
+
+                return AsistenciaDetalle.objects.none()
 
         # 🔹 filtro por cabecera
         if cabecera_id:

@@ -21,12 +21,12 @@ from apps.asistencia.views import PersonaPorUsuarioListView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include('apps.asistencia.urls')),
+    path('api/',include('apps.asistencia.api_urls')),
     path('accounts/', include('django.contrib.auth.urls')),
     path('', include('apps.core.urls')),
     
     path('chaining/', include('smart_selects.urls')),
-    path('personas/filtro', PersonaPorUsuarioListView.as_view(),name='personas_filtro'),
+    #path('personas/filtro', PersonaPorUsuarioListView.as_view(),name='personas_filtro'),
     #urls hija 
     path('cliente/',include('apps.cliente.urls')),
     path('asistencia/',include('apps.asistencia.urls')),
