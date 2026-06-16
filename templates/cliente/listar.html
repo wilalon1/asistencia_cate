@@ -1,0 +1,286 @@
+{% extends 'base/base.html' %}
+
+
+{% block content %}
+
+
+<h2>
+    Bienvenido {{ user.username }}
+</h2>
+
+
+{% if usuario_asistencia %}
+
+
+<h3>
+    Listado de confirmandos de la {{ usuario_asistencia.asistenciaCabecera.descripcion }}
+</h3>
+
+
+<p>
+    Acrónimo:
+    {{ usuario_asistencia.asistenciaCabecera.acronimo }}
+</p>
+
+<!---tabla-->
+
+<div class="card">
+
+
+<h2>👥 Lista de Confirmandos</h2>
+
+
+<input 
+id="search" 
+class="search" 
+placeholder="Buscar confirmando..."
+>
+
+
+<table>
+
+
+<thead>
+
+<tr>
+<th>Código</th>
+<th>Nombres</th>
+<th>Apellidos</th>
+<th>Fecha Nacimiento</th>
+<th>Estado</th>
+</tr>
+
+</thead>
+
+
+
+<tbody id="body">
+
+</tbody>
+
+
+</table>
+
+
+</div>
+
+
+
+
+
+<style>
+
+
+.card{
+
+margin-top:20px;
+background:white;
+padding:20px;
+border-radius:12px;
+box-shadow:0 4px 15px #ddd;
+
+}
+
+
+.search{
+
+padding:10px;
+width:300px;
+margin-bottom:15px;
+
+}
+
+
+table{
+
+width:100%;
+border-collapse:collapse;
+
+}
+
+
+th{
+
+background:#34495e;
+color:white;
+padding:12px;
+
+}
+
+
+td{
+
+padding:12px;
+border-bottom:1px solid #eee;
+
+}
+
+
+tr:hover{
+
+background:#eef8ff;
+
+}
+
+
+.badge{
+
+background:#3498db;
+color:white;
+padding:5px 10px;
+border-radius:20px;
+
+}
+
+
+</style>
+
+
+
+<!--fin tabla--->
+
+
+{% else %}
+
+<p>
+    No tiene asistencia asignada
+</p>
+
+
+{% endif %}
+
+<script>
+
+
+function formatDate(fecha){
+
+    let d = new Date(fecha);
+
+    return `${String(d.getDate()).padStart(2,'0')}/
+    ${String(d.getMonth()+1).padStart(2,'0')}/
+    ${d.getFullYear()}`;
+
+}
+
+
+
+function cargarPersonas(){
+
+
+    let usuario = "{{ user.username }}";
+
+
+    fetch(`/api/personas/filtro?usuario=${usuario}`)
+
+
+    .then(response => response.json())
+
+
+    .then(data => {
+
+
+        let tbody = document.getElementById("body");
+
+        tbody.innerHTML="";
+
+
+        data.forEach(persona => {
+
+
+            tbody.innerHTML += `
+
+
+            <tr>
+
+                <td>
+                    <span class="badge">
+                        ${persona.codigo}
+                    </span>
+                </td>
+
+
+                <td>
+                    ${persona.nombre}
+                </td>
+
+
+                <td>
+                    ${persona.apellidos}
+                </td>
+
+
+                <td>
+                    ${formatDate(persona.fechaNacimiento)}
+                </td>
+
+
+                <td>
+                    ${persona.estado ? "Activo":"Inactivo"}
+                </td>
+
+
+            </tr>
+
+
+            `;
+
+
+        });
+
+
+    })
+
+
+    .catch(error=>{
+
+        console.log(error);
+
+    });
+
+
+}
+
+
+
+cargarPersonas();
+
+
+
+// buscador
+
+document
+.getElementById("search")
+.addEventListener("keyup",function(){
+
+
+let texto=this.value.toLowerCase();
+
+
+let filas=document.querySelectorAll("#body tr");
+
+
+filas.forEach(fila=>{
+
+
+if(fila.innerText.toLowerCase().includes(texto)){
+
+    fila.style.display="";
+
+}else{
+
+    fila.style.display="none";
+
+}
+
+
+});
+
+
+});
+
+
+
+</script>
+
+
+{% endblock %}

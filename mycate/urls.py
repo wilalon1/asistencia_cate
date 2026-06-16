@@ -27,4 +27,7 @@ urlpatterns = [
     
     path('chaining/', include('smart_selects.urls')),
     path('personas/filtro', PersonaPorUsuarioListView.as_view(),name='personas_filtro'),
+    #urls hija 
+    path('cliente/',include('apps.cliente.urls')),
+    path('asistencia/',include('apps.asistencia.urls')),
 ]
