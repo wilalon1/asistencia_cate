@@ -182,16 +182,29 @@ class AsistenciaUsuarioListView(ListAPIView):
         resultado = []
 
 
+
+        if fecha_inicio and fecha_fin:
+
+
+            inicio = datetime.strptime(
+                fecha_inicio,
+                '%d-%m-%Y'
+            ).date()
+
+
+
+            fin = datetime.strptime(
+                fecha_fin,
+                '%d-%m-%Y'
+            ).date()
+
+
+
         for persona in personas:
 
 
-            asistio = 0
 
-            fecha_asistencia = "-"
-
-
-
-            detalle = AsistenciaDetalle.objects.filter(
+            detalles = AsistenciaDetalle.objects.filter(
                 persona=persona
             )
 
@@ -200,52 +213,64 @@ class AsistenciaUsuarioListView(ListAPIView):
             if fecha_inicio and fecha_fin:
 
 
-                inicio = datetime.strptime(
-                    fecha_inicio,
-                    '%d-%m-%Y'
-                ).date()
-
-
-                fin = datetime.strptime(
-                    fecha_fin,
-                    '%d-%m-%Y'
-                ).date()
-
-
-
-                registro = detalle.filter(
+                detalles = detalles.filter(
                     fecha__range=(inicio, fin)
-                ).first()
+                )
 
 
 
-                if registro:
+            if detalles.exists():
 
-                    asistio = 1
 
-                    fecha_asistencia = registro.fecha.strftime(
-                        '%d/%m/%Y'
-                    )
+                for detalle in detalles:
 
 
 
-            resultado.append({
+                    resultado.append({
 
-                "persona": persona.id,
+                        "persona": persona.id,
 
-                "persona_nombre":
-                f"{persona.nombre} {persona.apellidos}",
+                        "persona_nombre":
+                        f"{persona.nombre} {persona.apellidos}",
 
-                "codigo":
-                persona.codigo,
+                        "codigo":
+                        persona.codigo,
 
-                "fecha":
-                fecha_asistencia,
 
-                "asistio":
-                asistio
+                        "fecha":
+                        detalle.fecha.strftime(
+                            '%d/%m/%Y'
+                        ),
 
-            })
+
+                        "asistio":1
+
+                    })
+
+
+
+            else:
+
+
+
+                resultado.append({
+
+                    "persona": persona.id,
+
+                    "persona_nombre":
+                    f"{persona.nombre} {persona.apellidos}",
+
+                    "codigo":
+                    persona.codigo,
+
+
+                    "fecha":"-",
+
+
+                    "asistio":0
+
+                })
+
 
 
         return resultado
