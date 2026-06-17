@@ -26,3 +26,19 @@ class AsistenciaDetalleSerializer(serializers.ModelSerializer):
     def get_persona_nombre(self, obj):
 
         return f"{obj.persona.nombre} {obj.persona.apellidos}"
+    
+    def get_asistio(self, obj):
+
+        return getattr(obj, 'asistio', 0)
+    
+class AsistenciaUsuarioSerializer(serializers.Serializer):
+
+    persona = serializers.IntegerField()
+
+    persona_nombre = serializers.CharField()
+
+    codigo = serializers.CharField()
+    
+    fecha = serializers.CharField()
+
+    asistio = serializers.IntegerField()

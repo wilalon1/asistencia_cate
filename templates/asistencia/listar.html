@@ -8,4 +8,464 @@
     Bienvenido {{ user.username }}
 </h2>
 
+
+{% if usuario_asistencia %}
+
+
+<h3>
+    Listado de confirmandos de la 
+    {{ usuario_asistencia.asistenciaCabecera.descripcion }}
+</h3>
+
+
+<p>
+    Acrónimo:
+    {{ usuario_asistencia.asistenciaCabecera.acronimo }}
+</p>
+
+
+<hr>
+
+
+<!-- FILTROS -->
+
+<div class="card">
+
+    <h3>
+        📋 Control de Asistencia
+    </h3>
+
+
+    <div class="filtros">
+
+        <input 
+            type="text"
+            id="buscar"
+            placeholder="Buscar persona..."
+        >
+
+
+        <input 
+            type="date"
+            id="fecha_inicio"
+        >
+
+
+        <input 
+            type="date"
+            id="fecha_fin"
+        >
+
+
+        <button onclick="consultar()">
+            Consultar
+        </button>
+
+
+    </div>
+
+
+
+    <!-- TABLA DINAMICA -->
+
+<table id="tablaAsistencia">
+
+    <thead>
+
+        <tr id="header">
+
+        </tr>
+
+    </thead>
+
+
+    <tbody id="body">
+
+    </tbody>
+
+</table>
+
+
+</div>
+
+
+
+{% else %}
+
+
+<p>
+    No tiene asistencia asignada
+</p>
+
+
+{% endif %}
+
+
+
+<style>
+
+
+.card{
+
+margin-top:20px;
+background:white;
+padding:20px;
+border-radius:12px;
+box-shadow:0 4px 15px #ddd;
+
+}
+
+
+
+.filtros{
+
+display:flex;
+gap:10px;
+margin-bottom:20px;
+
+}
+
+
+
+input,button{
+
+padding:10px;
+border-radius:6px;
+border:1px solid #ccc;
+
+}
+
+
+
+button{
+
+background:#34495e;
+color:white;
+cursor:pointer;
+
+}
+
+
+
+table{
+
+width:100%;
+border-collapse:collapse;
+
+}
+
+
+
+th{
+
+background:#34495e;
+color:white;
+padding:12px;
+
+}
+
+
+
+td{
+
+padding:12px;
+border-bottom:1px solid #ddd;
+text-align:center;
+
+}
+
+
+
+tr:hover{
+
+background:#eef8ff;
+
+}
+
+
+</style>
+
+
+
+
+<script>
+
+let datos = [];
+
+
+
+function consultar(){
+
+
+    let usuario = "{{ user.username }}";
+
+
+    let inicio = document.getElementById("fecha_inicio").value;
+
+    let fin = document.getElementById("fecha_fin").value;
+
+
+
+    fetch(
+        `/api/asistencia-usuario/?usuario=${usuario}&fecha_inicio=${convertir(inicio)}&fecha_fin=${convertir(fin)}`
+    )
+
+
+    .then(response => response.json())
+
+
+    .then(data => {
+
+
+        datos = data;
+
+
+        pintarTabla();
+
+
+    });
+
+
+}
+
+
+
+
+function convertir(fecha){
+
+
+    if(!fecha)
+        return "";
+
+
+    let partes = fecha.split("-");
+
+
+    return `${partes[2]}-${partes[1]}-${partes[0]}`;
+
+}
+
+
+
+
+
+function pintarTabla(){
+
+
+
+    let fechas = [];
+
+
+
+    // obtener fechas únicas
+
+    datos.forEach(x=>{
+
+
+        if(x.fecha && x.fecha !== "-"){
+
+
+            if(!fechas.includes(x.fecha)){
+
+
+                fechas.push(x.fecha);
+
+
+            }
+
+
+        }
+
+
+    });
+
+
+
+
+    // ordenar fechas dd/MM/yyyy
+
+    fechas.sort((a,b)=>{
+
+
+        let fechaA = a.split("/").reverse().join("-");
+
+        let fechaB = b.split("/").reverse().join("-");
+
+
+        return new Date(fechaA) - new Date(fechaB);
+
+
+    });
+
+
+
+
+
+
+    let header = document.getElementById("header");
+
+
+
+    header.innerHTML = "<th>Nombre</th>";
+
+
+
+    fechas.forEach(f=>{
+
+
+        header.innerHTML +=
+        `<th>${f}</th>`;
+
+
+    });
+
+
+
+
+
+    let personas = {};
+
+
+
+
+    datos.forEach(x=>{
+
+
+
+        if(!personas[x.persona]){
+
+
+            personas[x.persona]={
+
+
+                nombre:x.persona_nombre,
+
+                fechas:{}
+
+
+            };
+
+
+        }
+
+
+
+        if(x.fecha !== "-" && x.asistio == 1){
+
+
+            personas[x.persona]
+            .fechas[x.fecha]=1;
+
+
+        }
+
+
+
+    });
+
+
+
+
+
+    let body = document.getElementById("body");
+
+
+    body.innerHTML="";
+
+
+
+
+
+    Object.values(personas).forEach(p=>{
+
+
+
+        let fila = 
+        `
+        <tr>
+
+            <td>
+                ${p.nombre}
+            </td>
+        `;
+
+
+
+
+        fechas.forEach(f=>{
+
+
+            fila +=
+            `
+            <td>
+                ${p.fechas[f] ? 1 : 0}
+            </td>
+            `;
+
+
+        });
+
+
+
+        fila += "</tr>";
+
+
+
+        body.innerHTML += fila;
+
+
+
+    });
+
+
+
+}
+
+
+
+
+// buscar por nombre
+
+document.getElementById("buscar")
+.addEventListener("keyup",function(){
+
+
+
+    let texto = this.value.toLowerCase();
+
+
+
+    document
+    .querySelectorAll("#body tr")
+    .forEach(fila=>{
+
+
+
+        let nombre = fila
+        .querySelector("td")
+        .textContent
+        .toLowerCase();
+
+
+
+
+        fila.style.display =
+        nombre.includes(texto)
+        ? ""
+        : "none";
+
+
+
+    });
+
+
+
+});
+
+
+
+</script>
+
+
+
 {% endblock %}

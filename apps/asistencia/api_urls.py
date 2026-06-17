@@ -1,10 +1,12 @@
 from django.urls import path
 
+
 from .views import (
     PersonaListView,
     AsistenciaCabeceraListView,
     AsistenciaDetalleListView,
     PersonaPorUsuarioListView,
+    AsistenciaUsuarioListView,
 )
 
 
@@ -31,5 +33,11 @@ urlpatterns = [
         'personas/filtro',
         PersonaPorUsuarioListView.as_view()
     ),
+    
+    path(
+        'asistencia-usuario/',
+        AsistenciaUsuarioListView.as_view()
+    ),
+
 
 ]
