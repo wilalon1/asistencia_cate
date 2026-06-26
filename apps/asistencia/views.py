@@ -156,11 +156,13 @@ class AsistenciaUsuarioListView(ListAPIView):
             return Persona.objects.none()
 
 
+
         try:
 
             usuario_asistencia = UsuarioAsistencia.objects.get(
                 usuario__username=usuario
             )
+
 
         except UsuarioAsistencia.DoesNotExist:
 
@@ -169,23 +171,30 @@ class AsistenciaUsuarioListView(ListAPIView):
 
 
         personas = Persona.objects.filter(
-            asistenciaCabecera=usuario_asistencia.asistenciaCabecera
+            asistenciaCabecera=
+            usuario_asistencia.asistenciaCabecera
         )
 
 
+
         resultado = []
+
 
 
         inicio = None
         fin = None
 
 
+
         if fecha_inicio and fecha_fin:
+
 
             inicio = datetime.strptime(
                 fecha_inicio,
                 '%d-%m-%Y'
             ).date()
+
+
 
             fin = datetime.strptime(
                 fecha_fin,
@@ -194,7 +203,10 @@ class AsistenciaUsuarioListView(ListAPIView):
 
 
 
+
+
         for persona in personas:
+
 
 
             detalles = AsistenciaDetalle.objects.filter(
@@ -202,7 +214,9 @@ class AsistenciaUsuarioListView(ListAPIView):
             )
 
 
+
             if inicio and fin:
+
 
                 detalles = detalles.filter(
                     fecha__range=(inicio, fin)
@@ -210,53 +224,72 @@ class AsistenciaUsuarioListView(ListAPIView):
 
 
 
+            # ordenar fechas
+            detalles = detalles.order_by('fecha')
+
+
+
+
             if detalles.exists():
+
 
 
                 for detalle in detalles:
 
 
-                    tipo = "0"
+
+                    tipo = "NA"
 
 
 
-                    if detalle.observacion:
+                    # Corpus Christi
 
-                        if "corpus christi" in detalle.observacion.lower():
+                    if detalle.observacion and "corpus christi" in detalle.observacion.lower():
 
-                            tipo = "CC"
-
-
-
-                    if tipo == "0":
+                        tipo = "CC"
 
 
-                        if detalle.catequesis and detalle.misa:
 
-                            tipo = "A-M"
+                    # Catequesis + Misa
+
+                    elif detalle.catequesis and detalle.misa:
+
+                        tipo = "A-M"
 
 
-                        elif detalle.catequesis and not detalle.misa:
 
-                            tipo = "A"
+                    # Solo Catequesis
+
+                    elif detalle.catequesis and not detalle.misa:
+
+                        tipo = "A"
+
 
 
 
                     resultado.append({
 
+
                         "persona": persona.id,
+
 
                         "persona_nombre":
                         f"{persona.nombre} {persona.apellidos}",
 
+
                         "codigo":
                         persona.codigo,
 
+
                         "fecha":
-                        detalle.fecha.strftime('%d/%m/%Y'),
+                        detalle.fecha.strftime(
+                            '%d/%m/%Y'
+                        ),
+
 
                         "asistio":
                         tipo
+
 
                     })
 
@@ -265,21 +298,30 @@ class AsistenciaUsuarioListView(ListAPIView):
             else:
 
 
+
                 resultado.append({
 
+
                     "persona": persona.id,
+
 
                     "persona_nombre":
                     f"{persona.nombre} {persona.apellidos}",
 
+
                     "codigo":
                     persona.codigo,
 
+
                     "fecha":"-",
 
-                    "asistio":"0"
+
+                    "asistio":"NA"
+
 
                 })
+
+
 
 
         return resultado
