@@ -148,15 +148,12 @@ class AsistenciaUsuarioListView(ListAPIView):
     def get_queryset(self):
 
         usuario = self.request.query_params.get('usuario')
-
         fecha_inicio = self.request.query_params.get('fecha_inicio')
-
         fecha_fin = self.request.query_params.get('fecha_fin')
 
 
         if not usuario:
             return Persona.objects.none()
-
 
 
         try:
@@ -165,7 +162,6 @@ class AsistenciaUsuarioListView(ListAPIView):
                 usuario__username=usuario
             )
 
-
         except UsuarioAsistencia.DoesNotExist:
 
             return Persona.objects.none()
@@ -173,25 +169,23 @@ class AsistenciaUsuarioListView(ListAPIView):
 
 
         personas = Persona.objects.filter(
-            asistenciaCabecera=
-            usuario_asistencia.asistenciaCabecera
+            asistenciaCabecera=usuario_asistencia.asistenciaCabecera
         )
-
 
 
         resultado = []
 
 
+        inicio = None
+        fin = None
+
 
         if fecha_inicio and fecha_fin:
-
 
             inicio = datetime.strptime(
                 fecha_inicio,
                 '%d-%m-%Y'
             ).date()
-
-
 
             fin = datetime.strptime(
                 fecha_fin,
@@ -203,15 +197,12 @@ class AsistenciaUsuarioListView(ListAPIView):
         for persona in personas:
 
 
-
             detalles = AsistenciaDetalle.objects.filter(
                 persona=persona
             )
 
 
-
-            if fecha_inicio and fecha_fin:
-
+            if inicio and fin:
 
                 detalles = detalles.filter(
                     fecha__range=(inicio, fin)
@@ -225,6 +216,31 @@ class AsistenciaUsuarioListView(ListAPIView):
                 for detalle in detalles:
 
 
+                    tipo = "0"
+
+
+
+                    if detalle.observacion:
+
+                        if "corpus christi" in detalle.observacion.lower():
+
+                            tipo = "CC"
+
+
+
+                    if tipo == "0":
+
+
+                        if detalle.catequesis and detalle.misa:
+
+                            tipo = "A-M"
+
+
+                        elif detalle.catequesis and not detalle.misa:
+
+                            tipo = "A"
+
+
 
                     resultado.append({
 
@@ -236,21 +252,17 @@ class AsistenciaUsuarioListView(ListAPIView):
                         "codigo":
                         persona.codigo,
 
-
                         "fecha":
-                        detalle.fecha.strftime(
-                            '%d/%m/%Y'
-                        ),
+                        detalle.fecha.strftime('%d/%m/%Y'),
 
-
-                        "asistio":1
+                        "asistio":
+                        tipo
 
                     })
 
 
 
             else:
-
 
 
                 resultado.append({
@@ -263,17 +275,11 @@ class AsistenciaUsuarioListView(ListAPIView):
                     "codigo":
                     persona.codigo,
 
-
                     "fecha":"-",
 
-
-                    "asistio":0
+                    "asistio":"0"
 
                 })
 
 
-
         return resultado
-    
-    
-    

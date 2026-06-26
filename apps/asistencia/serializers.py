@@ -41,4 +41,4 @@ class AsistenciaUsuarioSerializer(serializers.Serializer):
     
     fecha = serializers.CharField()
 
-    asistio = serializers.IntegerField()
+    asistio = serializers.CharField()
