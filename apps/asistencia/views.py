@@ -236,11 +236,7 @@ class AsistenciaUsuarioListView(ListAPIView):
 
                 for detalle in detalles:
 
-
-
                     tipo = "NA"
-
-
 
                     # Corpus Christi
 
