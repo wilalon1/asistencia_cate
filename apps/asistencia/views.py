@@ -247,6 +247,10 @@ class AsistenciaUsuarioListView(ListAPIView):
                     if detalle.observacion and "corpus christi" in detalle.observacion.lower():
 
                         tipo = "CC"
+                        
+                    # JJ
+                    elif detalle.observacion and "jj" in detalle.observacion.lower():
+                        tipo = "JJ"
 
 
 
