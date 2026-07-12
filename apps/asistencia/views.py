@@ -263,6 +263,10 @@ class AsistenciaUsuarioListView(ListAPIView):
                     elif detalle.catequesis and not detalle.misa:
 
                         tipo = "A"
+                        
+                    # Solo Misa
+                    elif not detalle.catequesis and detalle.misa:
+                        tipo = "M"
 
 
 

@@ -61,7 +61,9 @@
             Consultar
         </button>
 
-
+        <button onclick="exportarExcel()">
+            Exportar Excel
+        </button>
     </div>
 
 
@@ -186,9 +188,11 @@ background:#eef8ff;
 </style>
 
 
-
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
 <script>
+
+    
 
 let datos = [];
 
@@ -228,7 +232,26 @@ function consultar(){
 
 }
 
+function exportarExcel() {
 
+    let tabla = document.getElementById("tablaAsistencia");
+
+    let libro = XLSX.utils.table_to_book(tabla, {
+        sheet: "Asistencia"
+    });
+
+    let hoy = new Date();
+
+    let nombre =
+        "Asistencia_" +
+        hoy.getFullYear() +
+        ("0" + (hoy.getMonth()+1)).slice(-2) +
+        ("0" + hoy.getDate()).slice(-2) +
+        ".xlsx";
+
+    XLSX.writeFile(libro, nombre);
+
+}
 
 
 function convertir(fecha){

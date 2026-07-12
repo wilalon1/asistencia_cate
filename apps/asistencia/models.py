@@ -65,6 +65,8 @@ class AsistenciaDetalle(models.Model):
 
     catequesis = models.BooleanField(default=True)
     misa = models.BooleanField(default=True)
+    ##justificado = models.BooleanField(default=False)
+    ##corpus = models.BooleanField(default=True)
 
     def __str__(self):
         tipos = []
