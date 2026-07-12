@@ -234,18 +234,40 @@ function consultar(){
 
 function exportarExcel() {
 
-    let tabla = document.getElementById("tablaAsistencia");
+    let filas = [];
 
-    let libro = XLSX.utils.table_to_book(tabla, {
-        sheet: "Asistencia"
+    // Encabezado
+    let encabezado = [];
+    document.querySelectorAll("#header th").forEach(th => {
+        encabezado.push(th.innerText); // Se guarda como texto
     });
+
+    filas.push(encabezado);
+
+    // Filas
+    document.querySelectorAll("#body tr").forEach(tr => {
+
+        let fila = [];
+
+        tr.querySelectorAll("td").forEach(td => {
+            fila.push(td.innerText);
+        });
+
+        filas.push(fila);
+
+    });
+
+    let hoja = XLSX.utils.aoa_to_sheet(filas);
+
+    let libro = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(libro, hoja, "Asistencia");
 
     let hoy = new Date();
 
     let nombre =
         "Asistencia_" +
         hoy.getFullYear() +
-        ("0" + (hoy.getMonth()+1)).slice(-2) +
+        ("0" + (hoy.getMonth() + 1)).slice(-2) +
         ("0" + hoy.getDate()).slice(-2) +
         ".xlsx";
 
