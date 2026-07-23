@@ -49,18 +49,28 @@ class PersonaPorUsuarioListView(ListAPIView):
     def get_queryset(self):
 
         usuario = self.request.query_params.get('usuario')
+        estado = self.request.query_params.get('estado')
 
         if not usuario:
             return Persona.objects.none()
 
         try:
+
             usuario_asistencia = UsuarioAsistencia.objects.get(
                 usuario__username=usuario
             )
 
-            return Persona.objects.filter(
+            queryset = Persona.objects.filter(
                 asistenciaCabecera=usuario_asistencia.asistenciaCabecera
             )
+
+            if estado == "activo":
+                queryset = queryset.filter(estado=True)
+
+            elif estado == "inactivo":
+                queryset = queryset.filter(estado=False)
+
+            return queryset
 
         except UsuarioAsistencia.DoesNotExist:
             return Persona.objects.none()

@@ -106,84 +106,118 @@
 
 <style>
 
-
 .card{
-
-margin-top:20px;
-background:white;
-padding:20px;
-border-radius:12px;
-box-shadow:0 4px 15px #ddd;
-
+    margin-top:20px;
+    background:white;
+    padding:20px;
+    border-radius:12px;
+    box-shadow:0 4px 15px #ddd;
+    max-width:100%;
+    overflow:hidden;
 }
 
 
-
+/* FILTROS RESPONSIVE */
 .filtros{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-bottom:20px;
+}
 
-display:flex;
-gap:10px;
-margin-bottom:20px;
+
+.filtros input,
+.filtros button{
+
+    padding:10px;
+    border-radius:6px;
+    border:1px solid #ccc;
 
 }
 
 
-
-input,button{
-
-padding:10px;
-border-radius:6px;
-border:1px solid #ccc;
-
+.filtros input{
+    flex:1 1 200px;
+    min-width:150px;
 }
 
 
-
-button{
-
-background:#34495e;
-color:white;
-cursor:pointer;
-
+.filtros button{
+    flex:0 1 auto;
+    background:#34495e;
+    color:white;
+    cursor:pointer;
 }
 
 
-
-table{
-
-width:100%;
-border-collapse:collapse;
-
+/* CONTENEDOR DE TABLA */
+#tablaAsistencia{
+    width:100%;
+    border-collapse:collapse;
 }
 
+
+/* PERMITE SCROLL HORIZONTAL EN TABLA */
+.card{
+    overflow-x:auto;
+}
 
 
 th{
-
-background:#34495e;
-color:white;
-padding:12px;
-
+    background:#34495e;
+    color:white;
+    padding:12px;
+    white-space:nowrap;
 }
-
 
 
 td{
-
-padding:12px;
-border-bottom:1px solid #ddd;
-text-align:center;
-
+    padding:12px;
+    border-bottom:1px solid #ddd;
+    text-align:center;
+    white-space:nowrap;
 }
-
 
 
 tr:hover{
-
-background:#eef8ff;
-
+    background:#eef8ff;
 }
 
+
+
+/* CELULAR */
+@media(max-width:768px){
+
+    .card{
+        padding:12px;
+    }
+
+
+    .filtros{
+        flex-direction:column;
+    }
+
+
+    .filtros input,
+    .filtros button{
+
+        width:100%;
+        box-sizing:border-box;
+
+    }
+
+
+    h2{
+        font-size:22px;
+    }
+
+
+    h3{
+        font-size:18px;
+    }
+
+
+}
 
 </style>
 

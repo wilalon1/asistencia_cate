@@ -29,13 +29,40 @@
 
 <h2>👥 Lista de Confirmandos</h2>
 
-
+<!---
 <input 
 id="search" 
 class="search" 
 placeholder="Buscar confirmando..."
 >
+-->
+<div class="barra-filtros">
 
+    <input
+        id="search"
+        class="search"
+        placeholder="Buscar confirmando..."
+    >
+
+    <label>
+        <input
+            type="checkbox"
+            id="chkActivos"
+            checked
+        >
+        Activos
+    </label>
+
+    <label>
+        <input
+            type="checkbox"
+            id="chkInactivos"
+            checked
+        >
+        Inactivos
+    </label>
+
+</div>
 
 <table>
 
@@ -43,6 +70,7 @@ placeholder="Buscar confirmando..."
 <thead>
 
 <tr>
+<th>#</th>
 <th>Código</th>
 <th>Nombres</th>
 <th>Apellidos</th>
@@ -133,6 +161,60 @@ border-radius:20px;
 }
 
 
+.barra-filtros{
+    display:flex;
+    align-items:center;
+    gap:15px;
+    margin-bottom:15px;
+    flex-wrap:wrap; /* Para que en móviles se acomoden debajo */
+}
+
+.search{
+    width:300px;
+    padding:10px;
+    margin-bottom:0;
+}
+
+.barra-filtros label{
+    display:flex;
+    align-items:center;
+    gap:5px;
+    cursor:pointer;
+    font-weight:500;
+}
+
+.indice{
+
+    display:inline-flex;
+    justify-content:center;
+    align-items:center;
+
+    width:32px;
+    height:32px;
+
+    border-radius:50%;
+
+    background:#f39c12;
+    color:white;
+
+    font-weight:bold;
+
+}
+
+.estado-activo{
+
+    color:#28a745;
+    font-weight:bold;
+
+}
+
+.estado-inactivo{
+
+    color:#dc3545;
+    font-weight:bold;
+
+}
+
 </style>
 
 
@@ -152,6 +234,14 @@ border-radius:20px;
 <script>
 
 
+document
+.getElementById("chkActivos")
+.addEventListener("change", cargarPersonas);
+
+document
+.getElementById("chkInactivos")
+.addEventListener("change", cargarPersonas);
+
 function formatDate(fecha){
 
     let d = new Date(fecha);
@@ -166,31 +256,44 @@ function formatDate(fecha){
 
 function cargarPersonas(){
 
-
     let usuario = "{{ user.username }}";
+    let index = 0;
 
+    let activos = document.getElementById("chkActivos").checked;
+    let inactivos = document.getElementById("chkInactivos").checked;
 
-    fetch(`/api/personas/filtro?usuario=${usuario}`)
+    let estado = "";
 
+    if(activos && !inactivos){
+        estado = "activo";
+    }
+    else if(!activos && inactivos){
+        estado = "inactivo";
+    }
+    else{
+        estado = "todos";
+    }
+
+    fetch(`/api/personas/filtro?usuario=${usuario}&estado=${estado}`)
 
     .then(response => response.json())
 
-
     .then(data => {
 
-
         let tbody = document.getElementById("body");
+        
+        tbody.innerHTML = "";
 
-        tbody.innerHTML="";
-
-
-        data.forEach(persona => {
-
+        data.forEach((persona, index) => {
 
             tbody.innerHTML += `
 
-
             <tr>
+                <td>
+                    <span class="indice">
+                        ${index + 1}
+                    </span>
+                </td>
 
                 <td>
                     <span class="badge">
@@ -198,45 +301,26 @@ function cargarPersonas(){
                     </span>
                 </td>
 
+                <td>${persona.nombre}</td>
+
+                <td>${persona.apellidos}</td>
+
+                <td>${formatDate(persona.fechaNacimiento)}</td>
 
                 <td>
-                    ${persona.nombre}
-                </td>
-
-
-                <td>
-                    ${persona.apellidos}
-                </td>
-
-
-                <td>
-                    ${formatDate(persona.fechaNacimiento)}
-                </td>
-
-
-                <td>
-                    ${persona.estado ? "Activo":"Inactivo"}
-                </td>
-
+                    ${
+                    persona.estado
+                    ? '<span class="estado-activo">Activo</span>'
+                    : '<span class="estado-inactivo">Inactivo</span>'
+                    }
+</td>
 
             </tr>
 
-
             `;
-
-
         });
 
-
-    })
-
-
-    .catch(error=>{
-
-        console.log(error);
-
     });
-
 
 }
 
