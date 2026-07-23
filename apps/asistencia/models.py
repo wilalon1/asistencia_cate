@@ -65,7 +65,7 @@ class AsistenciaDetalle(models.Model):
 
     catequesis = models.BooleanField(default=True)
     misa = models.BooleanField(default=True)
-    ##justificado = models.BooleanField(default=False)
+    justificado = models.BooleanField(default=False)
     ##corpus = models.BooleanField(default=True)
 
     def __str__(self):
@@ -74,5 +74,7 @@ class AsistenciaDetalle(models.Model):
             tipos.append("C")
         if self.misa:
             tipos.append("M")
+        if self.justificado:
+            tipos.append("JJ")
 
         return f"{self.asistenciaCabecera} | {self.persona} | {self.fecha} | {' '.join(tipos)}| {self.observacion}" 

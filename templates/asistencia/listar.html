@@ -183,6 +183,36 @@ tr:hover{
     background:#eef8ff;
 }
 
+.estado-a{
+    color:#28a745;
+    font-weight:bold;
+}
+
+.estado-m{
+    color:#0d6efd;
+    font-weight:bold;
+}
+
+.estado-am{
+    color:#198754;
+    font-weight:bold;
+}
+
+.estado-cc{
+    color:#6f42c1;
+    font-weight:bold;
+}
+
+.estado-jj{
+    color:#1d0b77;
+    font-weight:bold;
+}
+
+.estado-na{
+    color:#dc3545;
+    font-weight:bold;
+}
+
 
 
 /* CELULAR */
@@ -338,17 +368,62 @@ function pintarTabla(){
 
     // obtener fechas únicas
 
-    datos.forEach(x=>{
 
+    let fechasUnicas = [];
+
+
+    datos.forEach(x=>{
 
         if(x.fecha && x.fecha !== "-"){
 
+            if(!fechasUnicas.includes(x.fecha)){
 
-            if(!fechas.includes(x.fecha)){
+                fechasUnicas.push(x.fecha);
+
+            }
+
+        }
+
+    });
 
 
-                fechas.push(x.fecha);
+    // Crear columnas C y M para cada fecha
 
+    // Crear columnas C y M solo si tienen datos reales
+
+fechasUnicas.forEach(f=>{
+
+
+    let existeC = false;
+    let existeM = false;
+
+
+
+    datos.forEach(x=>{
+
+
+        if(x.fecha === f){
+
+
+            // Catequesis
+            if(
+                x.asistio === "A" ||
+                x.asistio === "JJ" ||
+                x.asistio === "CC"
+            ){
+
+                existeC = true;
+
+            }
+
+
+
+            // Misa
+            if(
+                x.asistio === "M"
+            ){
+
+                existeM = true;
 
             }
 
@@ -360,10 +435,28 @@ function pintarTabla(){
 
 
 
+    if(existeC){
+
+        fechas.push(f + "-C");
+
+    }
+
+
+    if(existeM){
+
+        fechas.push(f + "-M");
+
+    }
+
+
+});
+
+
+
 
     // ordenar fechas dd/MM/yyyy
 
-    fechas.sort((a,b)=>{
+    /*fechas.sort((a,b)=>{
 
 
         let fechaA = a.split("/").reverse().join("-");
@@ -374,7 +467,59 @@ function pintarTabla(){
         return new Date(fechaA) - new Date(fechaB);
 
 
-    });
+    });*/
+    // ordenar fechas dd/MM/yyyy manteniendo C y M juntas
+
+fechas.sort((a,b)=>{
+
+
+    let fechaBaseA = a.split("-")[0];
+    let fechaBaseB = b.split("-")[0];
+
+
+    let fechaA = fechaBaseA
+        .split("/")
+        .reverse()
+        .join("-");
+
+
+    let fechaB = fechaBaseB
+        .split("/")
+        .reverse()
+        .join("-");
+
+
+    let resultado =
+        new Date(fechaA) - new Date(fechaB);
+
+
+
+    // Si es la misma fecha poner C antes que M
+
+    if(resultado === 0){
+
+
+        if(a.endsWith("-C") && b.endsWith("-M")){
+
+            return -1;
+
+        }
+
+
+        if(a.endsWith("-M") && b.endsWith("-C")){
+
+            return 1;
+
+        }
+
+
+    }
+
+
+    return resultado;
+
+
+});
 
 
 
@@ -389,6 +534,32 @@ function pintarTabla(){
 
 
 
+    /*fechas.forEach(f=>{
+
+    let tieneMisa = false;
+
+
+    datos.forEach(x=>{
+
+        if(x.fecha === f && x.asistio === "M"){
+            tieneMisa = true;
+        }
+
+    });
+
+
+    let tituloFecha = f;
+
+
+    if(!tieneMisa){
+        tituloFecha = `${f}-C`;
+    }
+
+
+    header.innerHTML +=
+    `<th>${tituloFecha}</th>`;
+
+});*/
     fechas.forEach(f=>{
 
 
@@ -429,10 +600,42 @@ function pintarTabla(){
 
 
 
-        if(x.fecha !== "-" ){
-            personas[x.persona]
-            .fechas[x.fecha]=x.asistio;
-        }
+        if(x.fecha !== "-"){
+
+
+            let sufijo = "";
+
+
+            if(
+                x.asistio === "NA" ||
+                x.asistio === "A" ||
+                x.asistio === "JJ" ||
+                x.asistio === "CC"
+            ){
+
+                sufijo="-C";
+
+            }
+
+
+            if(
+                x.asistio === "NA" ||
+                x.asistio === "M"
+            ){
+
+                sufijo="-M";
+
+            }
+
+
+
+        let columna = x.fecha + sufijo;
+
+
+        personas[x.persona]
+        .fechas[columna]=x.asistio;
+
+    }
 
 
 
@@ -469,16 +672,44 @@ function pintarTabla(){
 
         fechas.forEach(f=>{
 
+    let estado = p.fechas[f] ? p.fechas[f] : "NA";
 
-            fila +=
-            `
-            <td>
-                ${p.fechas[f] ? p.fechas[f] : "NA"}
-            </td>
-            `;
+    let clase = "";
 
+    switch(estado){
+        case "A":
+            clase = "estado-a";
+            break;
 
-        });
+        case "M":
+            clase = "estado-m";
+            break;
+
+        case "A-M":
+            clase = "estado-am";
+            break;
+
+        case "CC":
+            clase = "estado-cc";
+            break;
+
+        case "JJ":
+            clase = "estado-jj";
+            break;
+
+        default:
+            clase = "estado-na";
+    }
+
+    fila += `
+        <td>
+            <span class="${clase}">
+                ${estado}
+            </span>
+        </td>
+    `;
+
+});
 
 
 
