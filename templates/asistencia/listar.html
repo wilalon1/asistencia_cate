@@ -530,36 +530,13 @@ fechas.sort((a,b)=>{
 
 
 
-    header.innerHTML = "<th>Nombre</th>";
+    header.innerHTML = `
+    <th>Nombre</th>
+    `;
 
 
 
-    /*fechas.forEach(f=>{
 
-    let tieneMisa = false;
-
-
-    datos.forEach(x=>{
-
-        if(x.fecha === f && x.asistio === "M"){
-            tieneMisa = true;
-        }
-
-    });
-
-
-    let tituloFecha = f;
-
-
-    if(!tieneMisa){
-        tituloFecha = `${f}-C`;
-    }
-
-
-    header.innerHTML +=
-    `<th>${tituloFecha}</th>`;
-
-});*/
     fechas.forEach(f=>{
 
 
@@ -568,6 +545,11 @@ fechas.sort((a,b)=>{
 
 
     });
+
+    header.innerHTML += `
+    <th>Total Catequesis</th>
+    <th>% Asistencias</th>
+`;
 
 
 
@@ -668,9 +650,51 @@ fechas.sort((a,b)=>{
         `;
 
 
+let totalCatequesis = 0;
+let totalCatequesisProgramadas = 0;
 
 
-        fechas.forEach(f=>{
+// recorrer TODAS las fechas de catequesis
+fechas.forEach(columna=>{
+
+
+    if(columna.endsWith("-C")){
+
+
+        totalCatequesisProgramadas++;
+
+
+        // si no existe se considera NA
+        let valor = p.fechas[columna] || "NA";
+
+
+        if(
+            valor === "A" ||
+            valor === "CC"
+        ){
+
+            totalCatequesis++;
+
+        }
+
+
+    }
+
+
+});
+
+let porcentaje = 0;
+
+
+if(totalCatequesisProgramadas > 0){
+
+    porcentaje = 
+        ((totalCatequesis / totalCatequesisProgramadas) * 100)
+        .toFixed(2);
+
+}
+
+fechas.forEach(f=>{
 
     let estado = p.fechas[f] ? p.fechas[f] : "NA";
 
@@ -712,12 +736,21 @@ fechas.sort((a,b)=>{
 });
 
 
+// agregar columna total antes de cerrar la fila
+fila += `
+    <td>
+        ${totalCatequesis}
+    </td>
+    <td>
+        ${porcentaje}%
+    </td>
+`;
 
-        fila += "</tr>";
 
+// ahora sí insertar en la tabla
+fila += "</tr>";
 
-
-        body.innerHTML += fila;
+body.innerHTML += fila;
 
 
 
