@@ -580,6 +580,20 @@ fechas.sort((a,b)=>{
 
     let personas = {};
 
+    let totalesColumnas = {};
+
+    let inasistenciasColumnas = {};
+
+    let justificacionesColumnas = {};
+
+// Inicializar contador de columnas
+fechas.forEach(f=>{
+
+    totalesColumnas[f] = 0;
+    inasistenciasColumnas[f] = 0;
+    justificacionesColumnas[f] = 0;
+});
+
 
 
 
@@ -803,7 +817,41 @@ fechas.forEach(f=>{
             </span>
         </td>
     `;
+    
+    // CONTADOR VERTICAL PARA FILA TOTAL
 
+    if(f.endsWith("-C") && estado === "A"){
+
+        totalesColumnas[f]++;
+
+    }
+
+    if(f.endsWith("-C") && estado === "CC"){
+
+        totalesColumnas[f]++;
+
+    }
+
+
+    if(f.endsWith("-M") && estado === "M"){
+
+        totalesColumnas[f]++;
+
+    }
+
+    // CONTAR INASISTENCIAS
+    if(estado === "NA"){
+
+        inasistenciasColumnas[f]++;
+
+    }
+
+    if(f.endsWith("-C") &&
+        estado === "JJ"){
+
+        justificacionesColumnas[f]++;
+
+    }
 });
 
 
@@ -835,6 +883,165 @@ body.innerHTML += fila;
     });
 
 
+    // ==============================
+// FILA TOTAL
+// ==============================
+
+
+let filaTotal = 
+`
+<tr style="font-weight:bold;background:#f1f1f1">
+
+<td>
+TOTAL
+</td>
+`;
+
+
+
+fechas.forEach(f=>{
+
+
+    filaTotal +=
+    `
+    <td>
+        ${totalesColumnas[f]}
+    </td>
+    `;
+
+
+});
+
+
+
+// columnas resumen
+
+filaTotal +=
+`
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+</tr>
+`;
+
+
+
+body.innerHTML += filaTotal;
+
+// ==============================
+// FILA INASISTENCIAS
+// ==============================
+
+
+let filaInasistencias = 
+`
+<tr style="font-weight:bold;background:#ffe6e6">
+
+<td>
+INASISTENCIAS
+</td>
+`;
+
+
+
+fechas.forEach(f=>{
+
+
+    filaInasistencias +=
+    `
+    <td>
+        ${inasistenciasColumnas[f]}
+    </td>
+    `;
+
+
+});
+
+
+// columnas resumen
+
+filaInasistencias +=
+`
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+</tr>
+`;
+
+
+
+body.innerHTML += filaInasistencias;
+
+
+// ==============================
+// FILA JUSTIFICACIONES
+// ==============================
+
+
+let filaJustificaciones = 
+`
+<tr style="font-weight:bold;background:#e8f5e9">
+
+<td>
+JUSTIFICACIONES
+</td>
+`;
+
+
+
+fechas.forEach(f=>{
+
+
+    if(f.endsWith("-C")){
+
+        filaJustificaciones +=
+        `
+        <td>
+            ${justificacionesColumnas[f]}
+        </td>
+        `;
+
+    }else{
+
+
+        filaJustificaciones +=
+        `
+        <td>
+            -
+        </td>
+        `;
+
+    }
+
+
+});
+
+
+// columnas resumen
+
+filaJustificaciones +=
+`
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+</tr>
+`;
+
+
+
+body.innerHTML += filaJustificaciones;
 
 }
 
