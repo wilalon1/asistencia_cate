@@ -212,7 +212,17 @@ tr:hover{
     color:#dc3545;
     font-weight:bold;
 }
+/* Encabezados de Misa */
+.header-m{
+    background:#0d6efd !important;
+    color:white;
+}
 
+/* Encabezados de Catequesis */
+.header-c{
+    background:#34495e;
+    color:white;
+}
 
 
 /* CELULAR */
@@ -540,8 +550,16 @@ fechas.sort((a,b)=>{
     fechas.forEach(f=>{
 
 
-        header.innerHTML +=
-        `<th>${f}</th>`;
+        let clase = f.endsWith("-M")
+        ? "header-m"
+        : "header-c";
+
+    header.innerHTML += `
+        <th class="${clase}">
+            ${f}
+        </th>
+    `;
+
 
 
     });
@@ -549,6 +567,11 @@ fechas.sort((a,b)=>{
     header.innerHTML += `
     <th>Total Catequesis</th>
     <th>% Asistencias</th>
+    <th>Total Faltas Catequesis</th>
+    <th>% Faltas</th>
+    <th>Justificaciones</th>
+    <th>Total Misas</th>
+    <th>% Misas</th>
 `;
 
 
@@ -652,8 +675,11 @@ fechas.sort((a,b)=>{
 
 let totalCatequesis = 0;
 let totalCatequesisProgramadas = 0;
-
-
+let totalFaltas = 0;
+let totalJustificaciones = 0;
+let totalMisas = 0;
+let totalMisasProgramadas = 0;
+let porcentajeMisas = 0;
 // recorrer TODAS las fechas de catequesis
 fechas.forEach(columna=>{
 
@@ -677,6 +703,47 @@ fechas.forEach(columna=>{
 
         }
 
+        if(valor === "NA"){
+
+            totalFaltas++;
+
+        }
+
+        if(valor === "JJ"){
+            totalJustificaciones++;
+        }
+
+
+    }
+
+    if(columna.endsWith("-M")){
+
+
+        // cantidad de misas programadas
+        totalMisasProgramadas++;
+
+
+        let valor = p.fechas[columna];
+
+
+        // cantidad de misas asistidas
+        if(valor === "M"){
+
+            totalMisas++;
+
+        }
+
+        if(totalMisasProgramadas > 0){
+            porcentajeMisas =
+        ((totalMisas / totalMisasProgramadas) * 100)
+        .toFixed(2);
+
+        }else{
+
+        porcentajeMisas = 0;
+
+        }
+
 
     }
 
@@ -691,6 +758,10 @@ if(totalCatequesisProgramadas > 0){
     porcentaje = 
         ((totalCatequesis / totalCatequesisProgramadas) * 100)
         .toFixed(2);
+    porcentajeFaltas =
+        (
+            (totalFaltas / totalCatequesisProgramadas) * 100
+        ).toFixed(2);
 
 }
 
@@ -744,6 +815,13 @@ fila += `
     <td>
         ${porcentaje}%
     </td>
+    <td>
+        ${totalFaltas}
+    </td>
+    <td>${porcentajeFaltas}%</td>
+    <td>${totalJustificaciones}</td>
+    <td>${totalMisas}</td>
+    <td>${porcentajeMisas}%</td>
 `;
 
 
