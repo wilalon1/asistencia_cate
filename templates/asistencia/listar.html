@@ -572,6 +572,7 @@ fechas.sort((a,b)=>{
     <th>Justificaciones</th>
     <th>Total Misas</th>
     <th>% Misas</th>
+    <th>Observaciones</th>
 `;
 
 
@@ -765,6 +766,7 @@ fechas.forEach(columna=>{
 });
 
 let porcentaje = 0;
+let observacion = "";
 
 
 if(totalCatequesisProgramadas > 0){
@@ -855,6 +857,14 @@ fechas.forEach(f=>{
 });
 
 
+
+
+const nombre = (p.nombre || "").trim().toUpperCase();
+
+if (nombre.includes("VALERIA")) {
+    observacion = "Inicio 19/04/2026";
+}
+
 // agregar columna total antes de cerrar la fila
 fila += `
     <td>
@@ -870,7 +880,13 @@ fila += `
     <td>${totalJustificaciones}</td>
     <td>${totalMisas}</td>
     <td>${porcentajeMisas}%</td>
+    <td>${observacion}</td>
+
 `;
+
+
+
+
 
 
 // ahora sí insertar en la tabla
@@ -925,6 +941,8 @@ filaTotal +=
 <td>-</td>
 <td>-</td>
 <td>-</td>
+<td>-</td>
+
 </tr>
 `;
 
@@ -973,6 +991,8 @@ filaInasistencias +=
 <td>-</td>
 <td>-</td>
 <td>-</td>
+<td>-</td>
+
 </tr>
 `;
 
@@ -1029,6 +1049,7 @@ fechas.forEach(f=>{
 
 filaJustificaciones +=
 `
+<td>-</td>
 <td>-</td>
 <td>-</td>
 <td>-</td>
