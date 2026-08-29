@@ -13,6 +13,7 @@ from apps.asistencia.models import Persona, AsistenciaCabecera, AsistenciaDetall
 #http://127.0.0.1:8000/api/asistencia-detalle/?cabecera_id=1
 #http://localhost:8000/api/asistencia-detalle/?usuario=admin&fecha_inicio=01-06-2026&fecha_fin=30-06-2026
 #http://localhost:8000/api/asistencia-usuario/?usuario=admin&fecha_inicio=01-06-2026&fecha_fin=30-06-2026
+#http://localhost:8000/api/asistencia-detalle/?codigo=12345678&fecha_inicio=01-06-2026&fecha_fin=30-06-2026
 
 
 from .serializers import (
@@ -37,6 +38,24 @@ def listar(request):
             'usuario_asistencia': usuario_asistencia
         }
     )
+    
+#def ver(request):
+
+#    codigo = request.GET.get('codigo', '')
+
+#    return render(
+#        request,
+#        'asistencia/ver.html',
+#        {
+#            'codigo': codigo
+#        }
+#    )
+
+def ver(request):
+    return render(
+        request,
+        'asistencia/ver.html'
+    )    
 
 class PersonaListView(ListAPIView):
     queryset = Persona.objects.all()
@@ -93,7 +112,9 @@ class AsistenciaDetalleListView(ListAPIView):
         persona_id = self.request.query_params.get('idPersona')
         fecha_inicio = self.request.query_params.get('fecha_inicio')
         fecha_fin = self.request.query_params.get('fecha_fin')
-        observacion = self.request.query_params.get('observacion')  # 👈 NUEVO
+        observacion = self.request.query_params.get('observacion')
+        #Agregue este parametro
+        codigo = self.request.query_params.get('codigo')
         
         if usuario:
 
@@ -121,6 +142,11 @@ class AsistenciaDetalleListView(ListAPIView):
         # 🔹 filtro por persona
         if persona_id:
             queryset = queryset.filter(persona_id=persona_id)
+            
+        #filtro por codigo
+        if codigo:
+            codigo = self.request.query_params.get('codigo')
+            queryset = queryset.filter(persona__codigo=codigo)
 
         # 🔹 filtro por observación (J o A)
         if observacion:

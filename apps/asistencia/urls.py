@@ -12,5 +12,11 @@ urlpatterns = [
         views.listar,
         name='listar'
     ),
+    
+    path(
+        'ver/',
+        views.ver,
+        name='ver'
+    ),
 
 ]

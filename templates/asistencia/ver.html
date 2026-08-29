@@ -1,0 +1,291 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+
+<h2>
+    Consulta de Asistencia
+</h2>
+
+<div class="card">
+
+```
+<h3>
+    📋 Detalle de Asistencia
+</h3>
+
+<div class="filtros">
+
+    <input
+        type="text"
+        id="codigo"
+        placeholder="Código de persona"
+    >
+
+    <input
+        type="date"
+        id="fecha_inicio"
+    >
+
+    <input
+        type="date"
+        id="fecha_fin"
+    >
+
+    <button onclick="consultar()">
+        Consultar
+    </button>
+
+</div>
+
+<div id="persona"></div>
+
+<table id="tablaAsistencia">
+
+    <thead>
+
+        <tr>
+            <th>Fecha</th>
+            <th>Persona</th>
+            <th>Catequesis</th>
+            <th>Misa</th>
+            <th>Justificado</th>
+            <th>Observación</th>
+        </tr>
+
+    </thead>
+
+    <tbody id="body">
+
+    </tbody>
+
+</table>
+```
+
+</div>
+
+<style>
+
+.card{
+    margin-top:20px;
+    background:white;
+    padding:20px;
+    border-radius:12px;
+    box-shadow:0 4px 15px #ddd;
+    overflow-x:auto;
+}
+
+.filtros{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-bottom:20px;
+}
+
+.filtros input,
+.filtros button{
+    padding:10px;
+    border-radius:6px;
+    border:1px solid #ccc;
+}
+
+.filtros input{
+    flex:1 1 200px;
+}
+
+.filtros button{
+    background:#34495e;
+    color:white;
+    cursor:pointer;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th{
+    background:#34495e;
+    color:white;
+    padding:12px;
+}
+
+td{
+    padding:12px;
+    border-bottom:1px solid #ddd;
+    text-align:center;
+}
+
+tr:hover{
+    background:#eef8ff;
+}
+
+</style>
+
+<script>
+
+function consultar(){
+
+    let codigo =
+        document.getElementById("codigo").value;
+
+    let inicio =
+        document.getElementById("fecha_inicio").value;
+
+    let fin =
+        document.getElementById("fecha_fin").value;
+
+
+    if(!codigo){
+
+        alert("Ingrese el código de la persona");
+
+        return;
+    }
+
+
+    let url =
+        `/api/asistencia-detalle/?codigo=${codigo}`;
+
+
+    if(inicio){
+
+        url +=
+            `&fecha_inicio=${convertir(inicio)}`;
+
+    }
+
+
+    if(fin){
+
+        url +=
+            `&fecha_fin=${convertir(fin)}`;
+
+    }
+
+
+    fetch(url)
+
+        .then(response => {
+
+            if(!response.ok){
+
+                throw new Error(
+                    "Error al consultar la API"
+                );
+
+            }
+
+            return response.json();
+
+        })
+
+        .then(data => {
+
+            pintarTabla(data);
+
+        })
+
+        .catch(error => {
+
+            console.error(error);
+
+            alert(
+                "Ocurrió un error al consultar la asistencia"
+            );
+
+        });
+
+}
+
+
+function convertir(fecha){
+
+    if(!fecha)
+        return "";
+
+    let partes =
+        fecha.split("-");
+
+    return `${partes[2]}-${partes[1]}-${partes[0]}`;
+
+}
+
+
+function pintarTabla(data){
+
+    let body =
+        document.getElementById("body");
+
+    body.innerHTML = "";
+
+
+    if(data.length === 0){
+
+        body.innerHTML = `
+            <tr>
+                <td colspan="6">
+                    No se encontraron registros
+                </td>
+            </tr>
+        `;
+
+        return;
+    }
+
+
+    data.forEach(item => {
+
+        let fila = `
+
+            <tr>
+
+                <td>
+                    ${formatearFecha(item.fecha)}
+                </td>
+
+                <td>
+                    ${item.persona_nombre || ""}
+                </td>
+
+                <td>
+                    ${item.catequesis ? "Sí" : "No"}
+                </td>
+
+                <td>
+                    ${item.misa ? "Sí" : "No"}
+                </td>
+
+                <td>
+                    ${item.justificado ? "Sí" : "No"}
+                </td>
+
+                <td>
+                    ${item.observacion || "-"}
+                </td>
+
+            </tr>
+
+        `;
+
+        body.innerHTML += fila;
+
+    });
+
+}
+
+
+function formatearFecha(fecha){
+
+    if(!fecha)
+        return "-";
+
+    let partes =
+        fecha.split("-");
+
+    return `${partes[2]}/${partes[1]}/${partes[0]}`;
+
+}
+
+</script>
+
+{% endblock %}
