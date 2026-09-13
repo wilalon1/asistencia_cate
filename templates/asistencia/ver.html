@@ -39,26 +39,7 @@
 
 <div id="persona"></div>
 
-<table id="tablaAsistencia">
-
-    <thead>
-
-        <tr>
-            <th>Fecha</th>
-            <th>Persona</th>
-            <th>Catequesis</th>
-            <th>Misa</th>
-            <th>Justificado</th>
-            <th>Observación</th>
-        </tr>
-
-    </thead>
-
-    <tbody id="body">
-
-    </tbody>
-
-</table>
+<div id="reporteAsistencia"></div>
 ```
 
 </div>
@@ -119,6 +100,181 @@ tr:hover{
     background:#eef8ff;
 }
 
+.reporteAsistencia{
+    width:100%;
+}
+
+
+.seccion-mes{
+
+    margin-top:30px;
+
+    padding:20px;
+
+    border:1px solid #ddd;
+
+    border-radius:10px;
+
+    background:#fff;
+
+}
+
+
+.mes-header{
+
+    text-align:center;
+
+    margin-bottom:20px;
+
+}
+
+
+.mes-header h2{
+
+    margin:0;
+
+    text-transform:capitalize;
+
+    color:#34495e;
+
+}
+
+
+.mes-header h3{
+
+    margin-top:8px;
+
+    color:#555;
+
+}
+
+
+.tablas-mes{
+
+    display:flex;
+
+    gap:20px;
+
+    align-items:flex-start;
+
+}
+
+
+.tabla-contenedor{
+
+    width:50%;
+
+}
+
+
+.tabla-contenedor h3{
+
+    text-align:center;
+
+    padding:10px;
+
+    margin:0;
+
+}
+
+
+.titulo-catequesis{
+
+    background:#34495e;
+
+    color:white;
+
+}
+
+
+.titulo-misas{
+
+    background:#34495e;
+
+    color:white;
+
+}
+
+
+.tabla-reporte{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+}
+
+
+.tabla-reporte th{
+
+    background:#eee;
+
+    color:#333;
+
+    padding:10px;
+
+    border:1px solid #ddd;
+
+}
+
+
+.tabla-reporte td{
+
+    padding:10px;
+
+    border:1px solid #ddd;
+
+    text-align:center;
+
+}
+
+
+.tabla-reporte tr:hover{
+
+    background:#eef8ff;
+
+}
+
+
+.leyenda{
+
+    margin-top:10px;
+
+    padding:8px;
+
+    font-size:13px;
+
+    background:#f5f5f5;
+
+    border-radius:5px;
+
+}
+
+
+.sin-registros{
+
+    padding:20px;
+
+    text-align:center;
+
+}
+
+
+@media(max-width:800px){
+
+    .tablas-mes{
+
+        flex-direction:column;
+
+    }
+
+    .tabla-contenedor{
+
+        width:100%;
+
+    }
+
+}
 </style>
 
 <script>
@@ -213,63 +369,474 @@ function convertir(fecha){
 
 function pintarTabla(data){
 
-    let body =
-        document.getElementById("body");
+    let contenedor =
+        document.getElementById("reporteAsistencia");
 
-    body.innerHTML = "";
+    contenedor.innerHTML = "";
 
 
     if(data.length === 0){
 
-        body.innerHTML = `
-            <tr>
-                <td colspan="6">
-                    No se encontraron registros
-                </td>
-            </tr>
+        contenedor.innerHTML = `
+            <div class="sin-registros">
+                No se encontraron registros
+            </div>
         `;
 
         return;
     }
 
 
-    data.forEach(item => {
+    // ==========================================
+    // OBTENER RANGO DE FECHAS SELECCIONADO
+    // ==========================================
 
-        let fila = `
+    let inicioInput =
+        document.getElementById("fecha_inicio").value;
 
-            <tr>
+    let finInput =
+        document.getElementById("fecha_fin").value;
 
-                <td>
-                    ${formatearFecha(item.fecha)}
-                </td>
 
-                <td>
-                    ${item.persona_nombre || ""}
-                </td>
+    if(!inicioInput || !finInput){
 
-                <td>
-                    ${item.catequesis ? "Sí" : "No"}
-                </td>
+        alert("Ingrese la fecha de inicio y fecha fin");
 
-                <td>
-                    ${item.misa ? "Sí" : "No"}
-                </td>
+        return;
+    }
 
-                <td>
-                    ${item.justificado ? "Sí" : "No"}
-                </td>
 
-                <td>
-                    ${item.observacion || "-"}
-                </td>
+    let inicio =
+        new Date(inicioInput + "T00:00:00");
 
-            </tr>
+    let fin =
+        new Date(finInput + "T00:00:00");
+
+
+
+    // ==========================================
+    // OBTENER TODOS LOS MESES DEL RANGO
+    // ==========================================
+
+    let meses = [];
+
+
+    let fechaActual = new Date(
+        inicio.getFullYear(),
+        inicio.getMonth(),
+        1
+    );
+
+
+    while(
+        fechaActual <= fin
+    ){
+
+        meses.push({
+
+            año:
+                fechaActual.getFullYear(),
+
+            mes:
+                fechaActual.getMonth(),
+
+            nombre:
+                fechaActual.toLocaleDateString(
+                    'es-ES',
+                    {
+                        month:'long',
+                        year:'numeric'
+                    }
+                )
+
+        });
+
+
+        fechaActual.setMonth(
+            fechaActual.getMonth() + 1
+        );
+
+    }
+
+
+
+    // ==========================================
+    // ORDENAR LOS REGISTROS POR FECHA
+    // ==========================================
+
+    data.sort(function(a,b){
+
+        return new Date(a.fecha) -
+               new Date(b.fecha);
+
+    });
+
+
+
+    // ==========================================
+    // NOMBRE DE LA PERSONA
+    // ==========================================
+
+    let nombrePersona =
+        data[0].persona_nombre || "";
+
+
+
+    // ==========================================
+    // CREAR CADA MES
+    // ==========================================
+
+    meses.forEach(function(mesInfo){
+
+
+        let mesDiv =
+            document.createElement("div");
+
+        mesDiv.className =
+            "seccion-mes";
+
+
+
+        // ======================================
+        // REGISTROS DEL MES
+        // ======================================
+
+        let registrosMes =
+            data.filter(function(item){
+
+                let fecha =
+                    new Date(
+                        item.fecha + "T00:00:00"
+                    );
+
+                return (
+                    fecha.getFullYear()
+                    === mesInfo.año
+                    &&
+                    fecha.getMonth()
+                    === mesInfo.mes
+                );
+
+            });
+
+
+
+        // ======================================
+        // CATEQUESIS
+        // ======================================
+
+        let catequesis =
+            registrosMes.filter(function(item){
+
+                return (
+                    item.catequesis === true
+                    &&
+                    item.misa === false
+                );
+
+            });
+
+
+
+        // ======================================
+        // MISAS
+        // ======================================
+
+        let misas =
+            registrosMes.filter(function(item){
+
+                return item.misa === true;
+
+            });
+
+
+
+        // ======================================
+        // ORDENAR CATEQUESIS
+        // ======================================
+
+        catequesis.sort(function(a,b){
+
+            return new Date(a.fecha) -
+                   new Date(b.fecha);
+
+        });
+
+
+
+        // ======================================
+        // ORDENAR MISAS
+        // ======================================
+
+        misas.sort(function(a,b){
+
+            return new Date(a.fecha) -
+                   new Date(b.fecha);
+
+        });
+
+
+
+        // ======================================
+        // HTML DEL MES
+        // ======================================
+
+        let html = `
+
+            <div class="mes-header">
+
+                <h2>
+                    ${capitalizar(
+                        mesInfo.nombre
+                    )}
+                </h2>
+
+                <h3>
+                    ${nombrePersona}
+                </h3>
+
+            </div>
+
+
+            <div class="tablas-mes">
+
+
+                <!-- ========================= -->
+                <!-- CATEQUESIS                 -->
+                <!-- ========================= -->
+
+                <div class="tabla-contenedor">
+
+                    <h3 class="titulo-catequesis">
+                        Catequesis
+                    </h3>
+
+
+                    <table class="tabla-reporte">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Fecha
+                                </th>
+
+                                <th>
+                                    Estado
+                                </th>
+
+                                <th>
+                                    Observación
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+        `;
+
+
+
+        if(catequesis.length === 0){
+
+            html += `
+
+                <tr>
+
+                    <td colspan="3">
+                        No hay registros
+                    </td>
+
+                </tr>
+
+            `;
+
+        }
+        else{
+
+            catequesis.forEach(function(item){
+
+
+                let estado =
+                    item.justificado
+                    ? "J"
+                    : "A";
+
+
+                html += `
+
+                    <tr>
+
+                        <td>
+                            ${formatearFecha(
+                                item.fecha
+                            )}
+                        </td>
+
+                        <td>
+                            ${estado}
+                        </td>
+
+                        <td>
+                            ${item.observacion || "-"}
+                        </td>
+
+                    </tr>
+
+                `;
+
+            });
+
+        }
+
+
+
+        html += `
+
+                        </tbody>
+
+                    </table>
+
+
+                    <div class="leyenda">
+
+                        <strong>Leyenda:</strong>
+
+                        A = Asistió
+
+                        &nbsp;&nbsp;|&nbsp;&nbsp;
+
+                        J = Justificado
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- ========================= -->
+                <!-- MISAS                      -->
+                <!-- ========================= -->
+
+                <div class="tabla-contenedor">
+
+                    <h3 class="titulo-misas">
+                        Misas
+                    </h3>
+
+
+                    <table class="tabla-reporte">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Fecha
+                                </th>
+
+                                <th>
+                                    Estado
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+        `;
+
+
+
+        if(misas.length === 0){
+
+            html += `
+
+                <tr>
+
+                    <td colspan="2">
+                        No hay registros
+                    </td>
+
+                </tr>
+
+            `;
+
+        }
+        else{
+
+            misas.forEach(function(item){
+
+                html += `
+
+                    <tr>
+
+                        <td>
+                            ${formatearFecha(
+                                item.fecha
+                            )}
+                        </td>
+
+                        <td>
+                            A
+                        </td>
+
+                    </tr>
+
+                `;
+
+            });
+
+        }
+
+
+
+        html += `
+
+                        </tbody>
+
+                    </table>
+
+
+                    <div class="leyenda">
+
+                        <strong>Leyenda:</strong>
+
+                        A = Asistió a Misa
+
+                    </div>
+
+                </div>
+
+
+            </div>
 
         `;
 
-        body.innerHTML += fila;
+
+
+        mesDiv.innerHTML = html;
+
+
+        contenedor.appendChild(
+            mesDiv
+        );
 
     });
+
+}
+
+function capitalizar(texto){
+
+    if(!texto)
+        return "";
+
+    return texto.charAt(0).toUpperCase()
+        + texto.slice(1);
 
 }
 
