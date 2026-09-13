@@ -526,15 +526,19 @@ function pintarTabla(data){
         // ======================================
 
         let catequesis =
-            registrosMes.filter(function(item){
+    registrosMes.filter(function(item){
 
-                return (
-                    item.catequesis === true
-                    &&
-                    item.misa === false
-                );
+        return (
+            item.justificado === true
+            ||
+            (
+                item.catequesis === true
+                &&
+                item.misa === false
+            )
+        );
 
-            });
+    });
 
 
 
@@ -543,11 +547,15 @@ function pintarTabla(data){
         // ======================================
 
         let misas =
-            registrosMes.filter(function(item){
+    registrosMes.filter(function(item){
 
-                return item.misa === true;
+        return (
+            item.justificado !== true
+            &&
+            item.misa === true
+        );
 
-            });
+    });
 
 
 

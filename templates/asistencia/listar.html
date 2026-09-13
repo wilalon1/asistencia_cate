@@ -542,6 +542,7 @@ fechas.sort((a,b)=>{
 
     header.innerHTML = `
     <th>Nombre</th>
+    <th>Código</th>
     `;
 
 
@@ -609,6 +610,7 @@ fechas.forEach(f=>{
 
 
                 nombre:x.persona_nombre,
+                codigo:x.codigo,
 
                 fechas:{}
 
@@ -684,6 +686,9 @@ fechas.forEach(f=>{
 
             <td>
                 ${p.nombre}
+            </td>
+            <td>
+                ${p.codigo || "-"}
             </td>
         `;
 
@@ -911,6 +916,10 @@ let filaTotal =
 <td>
 TOTAL
 </td>
+
+<td>
+-
+</td>
 `;
 
 
@@ -962,6 +971,10 @@ let filaInasistencias =
 <td>
 INASISTENCIAS
 </td>
+
+<td>
+-
+</td>
 `;
 
 
@@ -1012,6 +1025,9 @@ let filaJustificaciones =
 
 <td>
 JUSTIFICACIONES
+</td>
+<td>
+-
 </td>
 `;
 
